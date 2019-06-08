@@ -2,6 +2,7 @@ const admin = require('./node_modules/firebase-admin');
 const fs = require('fs');
 // Provides csv functions
 const fcsv = require('./node_modules/fast-csv');
+const csvtojson =require("./node_modules/csvtojson");
 
 const serviceAccount = require("./service-key.json");
 //name of the collection
@@ -55,15 +56,21 @@ else {
 }
 
 function readCsv() {
-	fcsv.fromPath(csv, {headers: true, ignoreEmpty: true}).on('data', function(data){
-	    const stringData = JSON.stringify(data);
-	     upload(stringData);
+	csvtojson().fromFile(csv).on('data', data => {
+		const stringData = data.toString('utf8');
+		upload(stringData);
 	})
-	.on("end", function(){
-	     console.log("done");
-	});	
-}
+	.on('end', () => console.log('done'));
 
+	// fcsv.fromPath(csv, {headers: true, ignoreEmpty: true}).on('data', function(data){
+	// 	console.log(Object.keys(data));
+	// 	const stringData = JSON.stringify(data);
+	// 	//  upload(stringData);
+	// })
+	// .on("end", function(){
+	//      console.log("done");
+	// });
+}
 
 function upload(data) {
 	const parsedData = JSON.parse(data);
