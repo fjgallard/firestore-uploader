@@ -57,19 +57,24 @@ else {
 
 function readCsv() {
 	csvtojson().fromFile(csv).on('data', data => {
-		const stringData = data.toString('utf8');
+		let stringData = data.toString('utf8');
+		if(collectionKey == 'quests') {
+			stringData = generateKeywords(stringData);
+		}
 		upload(stringData);
 	})
 	.on('end', () => console.log('done'));
+}
 
-	// fcsv.fromPath(csv, {headers: true, ignoreEmpty: true}).on('data', function(data){
-	// 	console.log(Object.keys(data));
-	// 	const stringData = JSON.stringify(data);
-	// 	//  upload(stringData);
-	// })
-	// .on("end", function(){
-	//      console.log("done");
-	// });
+function generateKeywords(stringData) {
+	let parsedData = JSON.parse(stringData);
+	if(parsedData.name) {
+		let keywords = parsedData.name.split(' ').map(k => k.toLowerCase());
+		parsedData.keywords = keywords;
+		return JSON.stringify(parsedData);
+	}else{
+		return stringData;
+	}
 }
 
 function upload(data) {
