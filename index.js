@@ -61,15 +61,14 @@ function readCsv() {
 		upload(stringData);
 	})
 	.on('end', () => console.log('done'));
+}
 
-	// fcsv.fromPath(csv, {headers: true, ignoreEmpty: true}).on('data', function(data){
-	// 	console.log(Object.keys(data));
-	// 	const stringData = JSON.stringify(data);
-	// 	//  upload(stringData);
-	// })
-	// .on("end", function(){
-	//      console.log("done");
-	// });
+function formatData(stringData) {
+	let jsonData = JSON.parse(stringData);
+	if(jsonData.isLead) {
+		jsonData.isLead = (jsonData.isLead === 'true');
+	}
+	return JSON.stringify(jsonData);
 }
 
 function upload(data) {
