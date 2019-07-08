@@ -58,27 +58,22 @@ else {
 function readCsv() {
 	csvtojson().fromFile(csv).on('data', data => {
 		let stringData = data.toString('utf8');
-		stringData = formatData(stringData);
+		if (collectionKey == 'quests') {
+			stringData = generateKeywords(stringData);
+		}
 		upload(stringData);
 	})
-	.on('end', () => console.log('done'));
+		.on('end', () => console.log('done'));
 }
 
-function formatData(stringData) {
+function generateKeywords(stringData) {
 	let parsedData = JSON.parse(stringData);
 	if (parsedData.name) {
 		parsedData.keywords = getKeywords(parsedData.name);
+		return JSON.stringify(parsedData);
+	} else {
+		return stringData;
 	}
-	if(parsedData.coreTag) {
-		parsedData.coreTag = (parsedData.coreTag === 'true');
-	}
-	if(parsedData.status) {
-		parsedData.status = (parsedData.status === 'true');
-	}
-	if(parsedData.category.status) {
-		parsedData.category.status = (parsedData.category.status === 'true');
-	}
-	return JSON.stringify(parsedData);
 }
 
 function getKeywords(value) {
